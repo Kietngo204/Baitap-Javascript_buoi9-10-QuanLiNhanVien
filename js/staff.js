@@ -27,7 +27,7 @@ Staff.prototype.totalSalary = function () {
   } else {
     total = this.salary;
   }
-  return total;
+  return total.toLocaleString();
 };
 
 Staff.prototype.employeeRating = function () {

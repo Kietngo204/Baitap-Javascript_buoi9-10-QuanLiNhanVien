@@ -137,6 +137,8 @@
                     id="btnThem"
                     data-toggle="modal"
                     data-target="#myModal"
+                    data-backdrop="static"
+                    data-keyboard="false"
                   >
                     Thêm nhân viên
                   </button>
@@ -226,11 +228,13 @@
                     ></span>
                   </div>
                   <input
-                    type="text"
+                    type="number"
                     name="tk"
                     id="tknv"
                     class="form-control input-sm"
                     placeholder="Tài khoản"
+                    min="1000"
+                    max="999999"
                   />
                 </div>
 
@@ -319,7 +323,7 @@
                     ></span>
                   </div>
                   <input
-                    type="text"
+                    type="number"
                     name="luongCB"
                     id="luongCB"
                     class="form-control input-sm"
@@ -353,7 +357,7 @@
                     ></span>
                   </div>
                   <input
-                    type="text"
+                    type="number"
                     name="gioLam"
                     id="gioLam"
                     class="form-control input-sm"

@@ -1,8 +1,6 @@
 // Danh sách nhân viên
 let staffs = [];
 
-// Biến kiểm tra xem form đã submit hay chưa
-let isSubmitted = false;
 init();
 
 // Hàm init khởi tạo danh sách nhân viên nếu có
@@ -23,12 +21,17 @@ function init() {
   });
 
   display(staffs);
+  //
 }
+
+document.getElementById("btnThem").onclick = () => {
+  document.getElementById("btnCapNhat").style.display = "none";
+  document.getElementById("btnThemNV").style.display = "inline-block";
+  resetForm();
+};
 
 // Thêm nhân viên
 document.getElementById("btnThemNV").onclick = () => {
-  isSubmitted = true;
-
   // Gọi tới hàm validate
   let staff = validate();
 
@@ -84,6 +87,9 @@ function display(staffs) {
 
 // Hàm resetForm
 function resetForm() {
+  document.querySelectorAll(".sp-thongbao").forEach((e) => {
+    e.style.display = "none";
+  });
   document.getElementById("tknv").value = "";
   document.getElementById("name").value = "";
   document.getElementById("email").value = "";
@@ -94,7 +100,7 @@ function resetForm() {
   document.getElementById("gioLam").value = "";
 
   document.getElementById("tbNgay").value = "";
-  isSubmitted = false;
+  document.getElementById("tknv").disabled = false;
 }
 
 // Tìm loại nhân viên
@@ -128,6 +134,8 @@ function removeStaff(staffId) {
 
 // Hàm chỉnh sửa nhân viên
 function selectStaff(staffId) {
+  resetForm();
+  document.getElementById("btnCapNhat").style.display = "inline-block";
   let staff = staffs.find((value) => {
     return value.id === staffId;
   });
@@ -143,13 +151,11 @@ function selectStaff(staffId) {
 
   //Disable id and button add
   document.getElementById("tknv").disabled = true;
-  document.getElementById("btnThemNV").disabled = true;
+  document.getElementById("btnThemNV").style.display = "none";
 }
 
 // Cập nhật nhân viên
 document.getElementById("btnCapNhat").onclick = () => {
-  isSubmitted = true;
-
   let staff = validate();
   console.log(staff);
   if (!staff) {
@@ -193,6 +199,13 @@ function isID(value) {
   return true;
 }
 
+// Check id tồn tại
+function checkIdExist(id) {
+  let vs = staffs.find((value) => {
+    return value.id == id;
+  });
+  return vs !== undefined;
+}
 // Hàm kiểm tra tên nhân viên
 function isName(value) {
   regex =
@@ -215,6 +228,30 @@ function isSalary(value) {
 function isDate(value) {
   let regex =
     /^(?:(0[1-9]|1[012])[\/.](0[1-9]|[12][0-9]|3[01])[\/.](19|20)[0-9]{2})$/;
+  if (regex.test(value)) {
+    try {
+      console.log(value);
+      let arrStr = value.split("/");
+
+      let date = Number.parseInt(arrStr[1]);
+      let month = Number.parseInt(arrStr[0]) - 1;
+      let year = Number.parseInt(arrStr[2]);
+
+      let dt = new Date(year, month, date);
+
+      if (
+        dt.getDate() != date ||
+        dt.getMonth() != month ||
+        dt.getFullYear() != year
+      ) {
+        return false;
+      }
+      console.log(dt);
+      return true;
+    } catch (ex) {
+      return false;
+    }
+  }
   return regex.test(value);
 }
 
@@ -243,235 +280,305 @@ function isPassWord(value) {
 
 // Hàm kiểm tra thông tin của staff có hợp lệ hay không
 function validate() {
+  let id = validateID();
+  let name = validateName();
+  let email = validateEmail();
+  let password = validatePassword();
+  let datepicker = validateDate();
+  let salary = validateSalary();
+  let position = validatePosition();
+  let timeWork = validateTimeWork();
+  if (id === "") return undefined;
+
+  if (name === "") {
+    return undefined;
+  }
+
+  if (email === "") {
+    return undefined;
+  }
+
+  if (password === "") {
+    return undefined;
+  }
+
+  if (datepicker === "") {
+    return undefined;
+  }
+
+  if (salary === "") {
+    return undefined;
+  }
+
+  if (position === "") {
+    return undefined;
+  }
+
+  if (timeWork === "") {
+    return undefined;
+  }
+
+  let staff = new Staff(
+    id,
+    name,
+    email,
+    password,
+    datepicker,
+    +salary,
+    position,
+    +timeWork
+  );
+  return staff;
+}
+
+// validation
+
+function validateID() {
   let id = document.getElementById("tknv").value;
-  let name = document.getElementById("name").value;
-  let email = document.getElementById("email").value;
-  let password = document.getElementById("password").value;
-  let datepicker = document.getElementById("datepicker").value;
-  let salary = document.getElementById("luongCB").value;
-  let position = document.getElementById("chucvu").value;
-  let timeWork = document.getElementById("gioLam").value;
-
-  let isValid = true;
-
   let spanID = document.getElementById("tbTKNV");
   if (!isRequired(id)) {
-    isValid = false;
     spanID.style.display = "inline-block";
     spanID.innerHTML = "Tài khoản không được để trống";
+    return "";
   } else if (!isID(id)) {
-    isValid = false;
     spanID.style.display = "inline-block";
     spanID.innerHTML = "Tài khoản phải là số và dài 4 -6 kí tự";
+    return "";
   }
 
+  if (checkIdExist(id)) {
+    spanID.style.display = "inline-block";
+    spanID.innerHTML = "Tài khoản đã tồn tại";
+    return "";
+  }
+
+  return id;
+}
+function validateName() {
+  let name = document.getElementById("name").value;
   let spanName = document.getElementById("tbTen");
   if (!isRequired(name)) {
-    isValid = false;
     spanName.style.display = "inline-block";
     spanName.innerHTML = "Tên nhân viên không được để trống";
+    return "";
   } else if (!isName(name)) {
-    isValid = false;
     spanName.style.display = "inline-block";
     spanName.innerHTML = "Tên nhân viên không hợp lệ";
+    return "";
   }
-
+  return name;
+}
+function validateEmail() {
+  let email = document.getElementById("email").value;
   let spanEmail = document.getElementById("tbEmail");
   if (!isRequired(email)) {
-    isValid = false;
     spanEmail.style.display = "inline-block";
     spanEmail.innerHTML = "Email không được để trống";
+    return "";
   } else if (!isEmail(email)) {
-    isValid = false;
     spanEmail.style.display = "inline-block";
     spanEmail.innerHTML = "Email không hợp lệ";
+    return "";
   }
-
+  return email;
+}
+function validatePassword() {
+  let password = document.getElementById("password").value;
   let spanPw = document.getElementById("tbMatKhau");
   if (!isRequired(password)) {
-    isValid = false;
     spanPw.style.display = "inline-block";
     spanPw.innerHTML = "Mật khẩu không được để trống";
+    return "";
   } else if (!isPassWord(password)) {
-    isValid = false;
     spanPw.style.display = "inline-block";
     spanPw.innerHTML =
       "Mật khẩu bao gồm ít nhất 1 kí tự in hoa, 1 kí tự số và 1 kí tự đặc biệt";
+    return "";
   }
-
+  return password;
+}
+function validateDate() {
+  let datepicker = document.getElementById("datepicker").value;
   let spanDate = document.getElementById("tbNgay");
   if (!isRequired(datepicker)) {
-    isValid = false;
     spanDate.style.display = "inline-block";
     spanDate.innerHTML = "Ngày làm không được để trống";
   } else if (!isDate(datepicker)) {
-    isValid = false;
     spanDate.style.display = "inline-block";
     spanDate.innerHTML = "Ngày làm không hợp lệ";
   }
-
+  return datepicker;
+}
+function validateSalary() {
+  let salary = document.getElementById("luongCB").value;
   let spanSalary = document.getElementById("tbLuongCB");
   if (!isRequired(salary)) {
-    isValid = false;
     spanSalary.style.display = "inline-block";
     spanSalary.innerHTML = "Tiền lương không được để trống";
+    return "";
   } else if (!isSalary(+salary)) {
-    isValid = false;
     spanSalary.style.display = "inline-block";
     spanSalary.innerHTML =
       "Mức lương phải nằm trong khoảng từ 1.000.000 đến 20.000.000";
+    return "";
   }
-
-  if (!isRequired(position)) {
-    isValid = false;
-    document.getElementById("tbChucVu").style.display = "inline-block";
-    document.getElementById("tbChucVu").innerHTML = "Vui lòng chọn chức vụ";
-  }
-
+  return salary;
+}
+function validatePosition() {
+  let position = document.getElementById("chucvu").value;
+  document.getElementById("tbChucVu").style.display = "inline-block";
+  document.getElementById("tbChucVu").innerHTML = "Vui lòng chọn chức vụ";
+  return position;
+}
+function validateTimeWork() {
+  let timeWork = document.getElementById("gioLam").value;
   let spanTimeWork = document.getElementById("tbGiolam");
   if (!isRequired(timeWork)) {
-    isValid = false;
     spanTimeWork.style.display = "inline-block";
     spanTimeWork.innerHTML = "Giờ làm không được để trống";
   } else if (!isTimeWork(+timeWork)) {
-    isValid = false;
     spanTimeWork.style.display = "inline-block";
     spanTimeWork.innerHTML =
       "Số giờ làm trong tháng phải từ 80 giờ đến 200 giờ";
   }
-
-  if (isValid) {
-    // form hợp lệ
-    let staff = new Staff(
-      id,
-      name,
-      email,
-      password,
-      datepicker,
-      +salary,
-      position,
-      +timeWork
-    );
-    return staff;
-  }
-  // Form không hợp lệ => Không tạo đối tượng
-  return undefined;
+  return timeWork;
 }
 
-document.getElementById("tknv").oninput = (event) => {
-  if (!isSubmitted) {
-    return;
-  }
+// OnInput
 
+document.getElementById("tknv").oninput = (event) => {
   let spanId = document.getElementById("tbTKNV");
   if (isRequired(event.target.value)) {
     spanId.innerHTML = "";
+    spanId.style.display = "none";
   } else {
+    spanId.style.display = "inline-block";
     spanId.innerHTML = "Tài khoản không được để trống";
   }
 };
-document.getElementById("name").oninput = (event) => {
-  if (!isSubmitted) {
-    return;
-  }
 
+document.getElementById("name").oninput = (event) => {
   let spanName = document.getElementById("tbTen");
   if (isRequired(event.target.value)) {
     spanName.innerHTML = "";
+    spanName.style.display = "none";
   } else {
+    spanName.style.display = "inline-block";
     spanName.innerHTML = "Tên nhân viên không được để trống";
   }
 };
 document.getElementById("email").oninput = (event) => {
-  if (!isSubmitted) {
-    return;
-  }
-
   let spanEmail = document.getElementById("tbEmail");
   if (isRequired(event.target.value)) {
     spanEmail.innerHTML = "";
+    spanEmail.style.display = "none";
   } else {
+    spanEmail.style.display = "inline-block";
     spanEmail.innerHTML = "Email không được để trống";
   }
 };
 document.getElementById("password").oninput = (event) => {
-  if (!isSubmitted) {
-    return;
-  }
-
   let spanPw = document.getElementById("tbMatKhau");
   if (isRequired(event.target.value)) {
     spanPw.innerHTML = "";
+    spanPw.style.display = "none";
   } else {
+    spanPw.style.display = "inline-block";
     spanPw.innerHTML = "Mật khẩu không được để trống";
   }
 };
 document.getElementById("datepicker").oninput = (event) => {
-  // if (!isSubmitted) {
-  //   return;
-  // }
-
   let spanDate = document.getElementById("tbNgay");
   if (isRequired(event.target.value)) {
     spanDate.innerHTML = "";
+    spanDate.style.display = "none";
   } else {
+    spanDate.style.display = "inline-block";
     spanDate.innerHTML = "Ngày làm không được để trống";
   }
 };
 document.getElementById("luongCB").oninput = (event) => {
-  if (!isSubmitted) {
-    return;
-  }
-
   let spanSalary = document.getElementById("tbLuongCB");
   if (isRequired(event.target.value)) {
     spanSalary.innerHTML = "";
+    spanSalary.style.display = "none";
   } else {
+    spanSalary.style.display = "inline-block";
     spanSalary.innerHTML = "Tiền lương không được để trống";
   }
 };
 document.getElementById("chucvu").oninput = (event) => {
-  if (!isSubmitted) {
-    return;
-  }
-
   let spanPosition = document.getElementById("tbChucVu");
   if (isRequired(event.target.value)) {
     spanPosition.innerHTML = "";
+    spanPosition.style.display = "none";
   } else {
+    spanPosition.style.display = "inline-block";
     spanPosition.innerHTML = "Vui lòng chọn chức vụ";
   }
 };
 document.getElementById("gioLam").oninput = (event) => {
-  if (!isSubmitted) {
-    return;
-  }
-
   let spanTimeWork = document.getElementById("tbGiolam");
   if (isRequired(event.target.value)) {
     spanTimeWork.innerHTML = "";
+    spanTimeWork.style.display = "none";
   } else {
+    spanTimeWork.style.display = "inline-block";
     spanTimeWork.innerHTML = "Giờ làm không được để trống";
   }
 };
 
+// Onchange
+document.getElementById("datepicker").onchange = (event) => {
+  let spanDate = document.getElementById("tbNgay");
+  if (isRequired(event.target.value)) {
+    spanDate.innerHTML = "";
+    spanDate.style.display = "none";
+  } else {
+    spanDate.style.display = "inline-block";
+    spanDate.innerHTML = "Ngày làm không được để trống";
+  }
+};
+
+// OnfocusOut
+document.getElementById("tknv").onfocusout = (event) => {
+  validateID();
+};
+document.getElementById("name").onfocusout = (event) => {
+  validateName();
+};
+document.getElementById("email").onfocusout = (event) => {
+  validateEmail();
+};
+document.getElementById("password").onfocusout = (event) => {
+  validatePassword();
+};
+document.getElementById("datepicker").onfocusout = (event) => {
+  validateDate();
+};
+document.getElementById("luongCB").onfocusout = (event) => {
+  validateSalary();
+};
+document.getElementById("chucvu").onfocusout = (event) => {
+  validatePosition();
+};
+document.getElementById("gioLam").onfocusout = (event) => {
+  validateTimeWork();
+};
+
+// KeyDown
+
+var invalidChars = ["-", "+", "e", "E", "D", "d"];
+
+$("input[type = 'number']").bind("keydown", (event) => {
+  if (invalidChars.includes(event.key)) {
+    event.preventDefault();
+  }
+});
+
+// Sắp xếp tăng giảm
 document.getElementById("SapXepTang").onclick = () => {
   document.querySelector("th.nowrap").classList.toggle("change");
-  staffs = JSON.parse(localStorage.getItem("staffs")) || [];
-
-  staffs = staffs.map((value) => {
-    return new Staff(
-      value.id,
-      value.name,
-      value.email,
-      value.password,
-      value.datepicker,
-      value.salary,
-      value.position,
-      value.timeWork
-    );
-  });
-
   staffs = staffs.sort(function (id1, id2) {
     return id1.id - id2.id;
   });
@@ -480,21 +587,6 @@ document.getElementById("SapXepTang").onclick = () => {
 
 document.getElementById("SapXepGiam").onclick = () => {
   document.querySelector("th.nowrap").classList.toggle("change");
-  staffs = JSON.parse(localStorage.getItem("staffs")) || [];
-
-  staffs = staffs.map((value) => {
-    return new Staff(
-      value.id,
-      value.name,
-      value.email,
-      value.password,
-      value.datepicker,
-      value.salary,
-      value.position,
-      value.timeWork
-    );
-  });
-
   staffs = staffs.sort(function (id1, id2) {
     return id2.id - id1.id;
   });

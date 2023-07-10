@@ -4,8 +4,22 @@
   display: none;
 }
 
+#SapXepTang{
+  display: inline-block;
+  cursor: pointer;
+}
+
 #SapXepGiam{
 	display: none;
+  cursor: pointer;
+}
+
+.change #SapXepGiam{
+ display: inline-block;
+}
+
+.change #SapXepTang {
+  display: none;
 }
 
 #content{

@@ -151,7 +151,7 @@ document.getElementById("btnCapNhat").onclick = () => {
   isSubmitted = true;
 
   let staff = validate();
-
+  console.log(staff);
   if (!staff) {
     return;
   }
@@ -453,4 +453,50 @@ document.getElementById("gioLam").oninput = (event) => {
   } else {
     spanTimeWork.innerHTML = "Giờ làm không được để trống";
   }
+};
+
+document.getElementById("SapXepTang").onclick = () => {
+  document.querySelector("th.nowrap").classList.toggle("change");
+  staffs = JSON.parse(localStorage.getItem("staffs")) || [];
+
+  staffs = staffs.map((value) => {
+    return new Staff(
+      value.id,
+      value.name,
+      value.email,
+      value.password,
+      value.datepicker,
+      value.salary,
+      value.position,
+      value.timeWork
+    );
+  });
+
+  staffs = staffs.sort(function (id1, id2) {
+    return id1.id - id2.id;
+  });
+  display(staffs);
+};
+
+document.getElementById("SapXepGiam").onclick = () => {
+  document.querySelector("th.nowrap").classList.toggle("change");
+  staffs = JSON.parse(localStorage.getItem("staffs")) || [];
+
+  staffs = staffs.map((value) => {
+    return new Staff(
+      value.id,
+      value.name,
+      value.email,
+      value.password,
+      value.datepicker,
+      value.salary,
+      value.position,
+      value.timeWork
+    );
+  });
+
+  staffs = staffs.sort(function (id1, id2) {
+    return id2.id - id1.id;
+  });
+  display(staffs);
 };

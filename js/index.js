@@ -156,7 +156,7 @@ function selectStaff(staffId) {
 
 // Cập nhật nhân viên
 document.getElementById("btnCapNhat").onclick = () => {
-  let staff = validate();
+  let staff = validate((isUpdate = true));
   console.log(staff);
   if (!staff) {
     return;
@@ -279,8 +279,8 @@ function isPassWord(value) {
 }
 
 // Hàm kiểm tra thông tin của staff có hợp lệ hay không
-function validate() {
-  let id = validateID();
+function validate(isUpdate = false) {
+  let id = validateID(isUpdate);
   let name = validateName();
   let email = validateEmail();
   let password = validatePassword();
@@ -333,7 +333,7 @@ function validate() {
 
 // validation
 
-function validateID() {
+function validateID(isUpdate = false) {
   let id = document.getElementById("tknv").value;
   let spanID = document.getElementById("tbTKNV");
   if (!isRequired(id)) {
@@ -346,7 +346,7 @@ function validateID() {
     return "";
   }
 
-  if (checkIdExist(id)) {
+  if (!isUpdate && checkIdExist(id)) {
     spanID.style.display = "inline-block";
     spanID.innerHTML = "Tài khoản đã tồn tại";
     return "";

@@ -426,8 +426,11 @@ function validateSalary() {
 }
 function validatePosition() {
   let position = document.getElementById("chucvu").value;
-  document.getElementById("tbChucVu").style.display = "inline-block";
-  document.getElementById("tbChucVu").innerHTML = "Vui lòng chọn chức vụ";
+  if (position == "") {
+    document.getElementById("tbChucVu").style.display = "inline-block";
+    document.getElementById("tbChucVu").innerHTML = "Vui lòng chọn chức vụ";
+  }
+
   return position;
 }
 function validateTimeWork() {

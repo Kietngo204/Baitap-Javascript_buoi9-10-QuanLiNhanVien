@@ -190,13 +190,12 @@ function isRequired(value) {
 
 // Hàm kiểm tra tài khoản
 function isID(value) {
-  if (isNaN(value)) {
-    return false;
-  }
+  let regex = /^[a-z0-9_.]+$/;
+
   if (value.length < 4 || value.length > 6) {
     return false;
   }
-  return true;
+  return regex.test(value);
 }
 
 // Check id tồn tại
@@ -342,7 +341,7 @@ function validateID(isUpdate = false) {
     return "";
   } else if (!isID(id)) {
     spanID.style.display = "inline-block";
-    spanID.innerHTML = "Tài khoản phải là số và dài 4 -6 kí tự";
+    spanID.innerHTML = "Tài khoản không hợp lệ";
     return "";
   }
 

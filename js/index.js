@@ -582,7 +582,7 @@ $("input[type = 'number']").bind("keydown", (event) => {
 document.getElementById("SapXepTang").onclick = () => {
   document.querySelector("th.nowrap").classList.toggle("change");
   staffs = staffs.sort(function (id1, id2) {
-    return id1.id - id2.id;
+    return id1.id.localeCompare(id2.id);
   });
   display(staffs);
 };
@@ -590,7 +590,7 @@ document.getElementById("SapXepTang").onclick = () => {
 document.getElementById("SapXepGiam").onclick = () => {
   document.querySelector("th.nowrap").classList.toggle("change");
   staffs = staffs.sort(function (id1, id2) {
-    return id2.id - id1.id;
+    return id2.id.localeCompare(id1.id);
   });
   display(staffs);
 };

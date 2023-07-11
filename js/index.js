@@ -190,7 +190,7 @@ function isRequired(value) {
 
 // Hàm kiểm tra tài khoản
 function isID(value) {
-  let regex = /^[a-z0-9_.]+$/;
+  let regex = /^[a-zA-Z0-9_.]+$/;
 
   if (value.length < 4 || value.length > 6) {
     return false;

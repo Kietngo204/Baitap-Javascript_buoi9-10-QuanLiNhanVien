@@ -56,7 +56,7 @@ function display(staffs) {
       result +
       `
     <tr>
-    <td>${value.id}</td>
+    <td>${value.id.toLowerCase()}</td>
     <td>${value.name}</td>
     <td>${value.email}</td>
     <td>${value.datepicker}</td>
@@ -334,6 +334,7 @@ function validate(isUpdate = false) {
 
 function validateID(isUpdate = false) {
   let id = document.getElementById("tknv").value;
+  console.log(id);
   let spanID = document.getElementById("tbTKNV");
   if (!isRequired(id)) {
     spanID.style.display = "inline-block";
@@ -351,7 +352,7 @@ function validateID(isUpdate = false) {
     return "";
   }
 
-  return id;
+  return id.toLowerCase();
 }
 function validateName() {
   let name = document.getElementById("name").value;

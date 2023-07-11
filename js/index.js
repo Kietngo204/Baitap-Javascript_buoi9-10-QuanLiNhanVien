@@ -333,7 +333,7 @@ function validate(isUpdate = false) {
 // validation
 
 function validateID(isUpdate = false) {
-  let id = document.getElementById("tknv").value;
+  let id = document.getElementById("tknv").value.toLowerCase();
   console.log(id);
   let spanID = document.getElementById("tbTKNV");
   if (!isRequired(id)) {
@@ -352,7 +352,7 @@ function validateID(isUpdate = false) {
     return "";
   }
 
-  return id.toLowerCase();
+  return id;
 }
 function validateName() {
   let name = document.getElementById("name").value;
